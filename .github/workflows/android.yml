@@ -10,6 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+
     steps:
       - name: Baixar configuracao
         uses: actions/checkout@v4
@@ -21,15 +25,27 @@ jobs:
           java-version: '17'
 
       - name: Preparar Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Instalar componentes Android
         run: |
-          sdkmanager --install \
+          echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
+
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" \
+            -type f -name sdkmanager | sort -V | tail -n 1)
+
+          if [ -z "$SDKMANAGER" ]; then
+            echo "ERRO: sdkmanager nao encontrado"
+            exit 1
+          fi
+
+          echo "$(dirname "$SDKMANAGER")" >> $GITHUB_PATH
+
+          yes | "$SDKMANAGER" \
+            --sdk_root="$ANDROID_HOME" --licenses || true
+
+          "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --install \
             "platform-tools" \
             "platforms;android-35" \
             "build-tools;35.0.0" \
-            "ndk;27.0.12077973" \
+            "ndk;27.2.12479018" \
             "cmake;3.22.1"
 
       - name: Configurar Gradle
@@ -40,7 +56,7 @@ jobs:
       - name: Baixar projeto do Google Drive
         run: |
           python -m pip install --upgrade gdown
-          gdown "1cbwsbtjObAIklEMzFFEQscPtsIp4SxSb" -O VixxRpg.zip
+          gdown "1j6A9FW3eln4uw4eiO_WW4uEbq1wLdlU-" -O VixxRpg.zip
 
       - name: Extrair projeto
         run: |
@@ -49,10 +65,11 @@ jobs:
 
       - name: Localizar projeto
         run: |
-          SETTINGS_FILE=$(find project -name settings.gradle -type f | head -n 1)
+          SETTINGS_FILE=$(find project -type f \
+            -name settings.gradle -print -quit)
 
           if [ -z "$SETTINGS_FILE" ]; then
-            echo "Projeto Android nao encontrado"
+            echo "ERRO: settings.gradle nao encontrado"
             exit 1
           fi
 
