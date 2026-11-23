@@ -40,7 +40,7 @@ jobs:
       - name: Baixar projeto do Google Drive
         run: |
           python -m pip install --upgrade gdown
-          gdown "1j6A9FW3eln4uw4eiO_WW4uEbq1wLdlU-" -O VixxRpg.zip
+          gdown "1cbwsbtjObAIklEMzFFEQscPtsIp4SxSb" -O VixxRpg.zip
 
       - name: Extrair projeto
         run: |
