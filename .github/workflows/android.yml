@@ -1,4 +1,4 @@
-name: Build VixxLauncher APK
+name: Build VixxRpg APK
 
 on:
   workflow_dispatch:
@@ -47,12 +47,12 @@ jobs:
       - name: Baixar projeto do Google Drive
         run: |
           python -m pip install gdown
-          gdown "1TemifHyEDfzWuTScBnDge4ZWS4Cm_JPT" -O VixxLauncher.zip
+          gdown "1j6A9FW3eln4uw4eiO_WW4uEbq1wLdlU-" -O VixxLauncher.zip
 
       - name: Extrair projeto
         run: |
           mkdir project
-          unzip -q VixxLauncher.zip -d project
+          unzip -q VixxRpg.zip -d project
 
       - name: Compilar APK
         run: |
@@ -70,7 +70,7 @@ jobs:
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
         with:
-          name: VixxLauncher-APK
+          name: VixxRpg-APK
           path: project/**/build/outputs/apk/**/*.apk
           if-no-files-found: error
           
